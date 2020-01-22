@@ -11,7 +11,7 @@ public class Head {
         // Определяем кол-во недель
         int maxWeeks;
         if (workName.equals("ТО")) maxWeeks = maxTerm;
-        else maxWeeks = Math.round(maxTerm / 7);
+        else maxWeeks = Math.round(maxTerm / 7f);
 
         // Добавляем стили
         CellStyle titleBoldStyle = Styles.createTitleBoldStyle(sheet.getWorkbook());
@@ -46,7 +46,7 @@ public class Head {
         Cell titleCell2 = title2.createCell(0);
 
         if (workName.equals("ТО")) {
-            titleCell2.setCellValue("Срок окончания выполнения работ: через " + Math.round(maxWeeks/7) + " недели / "
+            titleCell2.setCellValue("Срок окончания выполнения работ: через " + Math.round(maxWeeks/7f) + " недели / "
                 + maxTerm + " календарных дней с момента начала выполнения работ");
         } else {
             titleCell2.setCellValue("Срок окончания выполнения работ: через " + maxWeeks + " недель / "

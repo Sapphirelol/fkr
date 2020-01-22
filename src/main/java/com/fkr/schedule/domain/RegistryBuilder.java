@@ -18,13 +18,13 @@ public abstract class RegistryBuilder {
 
         Registry registry = new Registry(
                 file,
-                new ArrayList<String>(),
-                new ArrayList<Boolean>(),
-                new ArrayList<String>(),
-                new ArrayList<String>(),
-                new ArrayList<String>(),
-                new ArrayList<Short>(),
-                new ArrayList<Double>()
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>()
         );
 
         for (int i=0; i<sheet.getLastRowNum(); i++) {

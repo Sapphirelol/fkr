@@ -4,9 +4,9 @@ import com.fkr.schedule.beautify.Styles;
 import com.fkr.schedule.domain.WorkStages;
 import org.apache.poi.ss.usermodel.*;
 
-public class Stages {
+class Stages {
 
-    public static void addStages(
+    static void addStages(
             Sheet sheet,
             WorkStages workStages,
             int weeksFull,
@@ -31,8 +31,6 @@ public class Stages {
                 (short) 0
         );
 
-
-        int weeksBuffer = 0;
 
         for (int stageCount=0; stageCount < workStages.getNames().size(); stageCount++) {
 

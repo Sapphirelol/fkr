@@ -34,7 +34,6 @@ public class Styles {
     ) {
 
         CellStyle style = wb.createCellStyle();
-        DataFormat format = wb.createDataFormat();
 
         style.setFont(Fonts.createTableFont(wb, isBold, isItalic));
         style.setAlignment(alignment);

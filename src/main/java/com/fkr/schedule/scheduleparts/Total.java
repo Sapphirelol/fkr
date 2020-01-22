@@ -46,7 +46,7 @@ public class Total {
             totalRegNum.setCellStyle(tableStyle);
         }
 
-        Double contractSum = 0d;
+        double contractSum = 0d;
 
         for (double cost : registry.getCost()) {
             contractSum += cost;

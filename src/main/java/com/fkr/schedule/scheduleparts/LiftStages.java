@@ -7,9 +7,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class LiftStages {
+class LiftStages {
 
-    public static void addLiftStages(
+    static void addLiftStages(
             Sheet sheet,
             int weeksFull,
             String workName,

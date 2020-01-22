@@ -58,7 +58,7 @@ public class Addresses {
 
         for (int workCount=0; workCount < registry.getAddresses().size(); workCount++) {
 
-            if (workCount ==0 || (workCount >0 && !registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount -1)))) {
+            if (workCount ==0 || !registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount -1))) {
 
                 // Строка под адрес
                 Row addressRow = sheet.createRow(sheet.getLastRowNum() + 1);
@@ -207,7 +207,7 @@ public class Addresses {
                 if (registry.getWorkNames().get(workCount).equals("Лифт")) {
                     LiftStages.addLiftStages(
                             sheet,
-                            Math.round(registry.getTerms().get(workCount) / 7),
+                            Math.round(registry.getTerms().get(workCount) / 7f),
                             registry.getWorkNames().get(workCount),
                             addressNum,
                             workNum
@@ -222,10 +222,11 @@ public class Addresses {
                     );
                 }
             } else {
+                assert workStages != null;
                 Stages.addStages(
                         sheet,
                         workStages,
-                        Math.round(registry.getTerms().get(workCount) / 7),
+                        Math.round(registry.getTerms().get(workCount) / 7f),
                         weeksForPrep,
                         addressNum,
                         workNum

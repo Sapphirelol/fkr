@@ -17,9 +17,9 @@ public abstract class WorkStagesBuilder {
 
         WorkStages workStages = new WorkStages(
                 sheet.getRow(0).getCell(1).getStringCellValue(),
-                new ArrayList<String>(),
-                new ArrayList<Short>(),
-                new ArrayList<Short>()
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>()
         );
 
         for (int i=0; i<sheet.getLastRowNum(); i++) {

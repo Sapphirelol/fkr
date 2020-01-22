@@ -3,9 +3,9 @@ package com.fkr.schedule.beautify;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Workbook;
 
-public class Fonts {
+class Fonts {
 
-    public static Font createTitleBoldFont(Workbook wb) {
+    static Font createTitleBoldFont(Workbook wb) {
 
         Font font = wb.createFont();
         font.setFontHeightInPoints((short)12);
@@ -15,7 +15,7 @@ public class Fonts {
         return font;
     }
 
-    public static Font createTitleFont(Workbook wb) {
+    static Font createTitleFont(Workbook wb) {
 
         Font font = wb.createFont();
         font.setFontHeightInPoints((short)12);
@@ -24,7 +24,7 @@ public class Fonts {
         return font;
     }
 
-    public static Font createTableFont(Workbook wb, boolean isBold, boolean isItalic) {
+    static Font createTableFont(Workbook wb, boolean isBold, boolean isItalic) {
 
         Font font = wb.createFont();
         font.setFontHeightInPoints((short)10);
