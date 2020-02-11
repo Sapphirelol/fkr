@@ -44,7 +44,16 @@ public abstract class RegistryBuilder {
                 registry.getWorkTypes().add("");
             }
 
-            registry.getTerms().add((short) Math.rint(row.getCell(7).getNumericCellValue()));
+            try {
+                registry.getTerms().add(Short.valueOf(row.getCell(7).getStringCellValue()));
+            } catch (Exception ignored) {
+                try {
+                    registry.getTerms().add((short) Math.rint(row.getCell(7).getNumericCellValue()));
+                } catch (Exception e) {
+                    System.out.println("Ошибка в поле \"Срок\" в строке " + i);
+                }
+            }
+
             registry.getCost().add(row.getCell(6).getNumericCellValue());
 
         }
