@@ -27,34 +27,88 @@ public abstract class RegistryBuilder {
                 new ArrayList<>()
         );
 
-        for (int i=0; i<sheet.getLastRowNum(); i++) {
+        WorkNames workNames = WorkNamesBuilder.buildFromWorkNamesFile("F:/Schedules/Виды работ.xlsx");
 
-            Row row = sheet.getRow(i+1);
+        Row titleRow = sheet.getRow(6);
+        int addressColumnIndex = 0,
+                statusColumnIndex = 0,
+                regNumColumnIndex = 0,
+                workNameColumnIndex = 0,
+                termsColumnIndex = 0,
+                costColumnIndex = 0,
+                typeColumnIndex = 0;
 
-            registry.getAddresses().add(row.getCell(1).getStringCellValue());
-            registry.getStatus().add(row.getCell(2).getStringCellValue().equals("ОКН"));
-            registry.getRegNum().add(row.getCell(3).getStringCellValue());
-            registry.getWorkNames().add(row.getCell(4).getStringCellValue());
+        for (int j=0; j<20; j++) {
 
-            if (row.getCell(4).getStringCellValue().equals("Ремонт крыш") ||
-                row.getCell(4).getStringCellValue().equals("Ремонт фасадов"))
-            {
-                registry.getWorkTypes().add(row.getCell(5).getStringCellValue());
+            try {
+
+                if (titleRow.getCell(j).getStringCellValue().isEmpty() || titleRow.getCell(j).getStringCellValue().equals("")) {
+                    System.out.println("Конец шапки таблицы, всего колонок - " + (j+1));
+                    break;
+                } else if (addressColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Адрес")) {
+                    addressColumnIndex = j;
+                } else if (statusColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("КГИОП")) {
+                    statusColumnIndex = j;
+                } else if (regNumColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("лифт")) {
+                    regNumColumnIndex = j;
+                } else if (workNameColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Вид работ")) {
+                    workNameColumnIndex = j;
+                } else if (termsColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Срок выполнения работ в многоквартирном доме")) {
+                    termsColumnIndex = j;
+                } else if (costColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Сметная стоимость выполнения отдельных видов работ")) {
+                    costColumnIndex = j;
+                } else if (typeColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Тип")) {
+                    typeColumnIndex = j;
+                }
+
+            } catch (Exception e) {
+                System.out.println("Конец шапки таблицы, всего колонок - " + (j+1));
+                break;
+            }
+
+        }
+
+        for (int i=7; i<=sheet.getLastRowNum(); i++) {
+
+            Row row = sheet.getRow(i);
+
+            try {
+                if (row.getCell(addressColumnIndex).getStringCellValue().isEmpty() ||
+                    row.getCell(addressColumnIndex).getStringCellValue().equals(""))
+                {
+                    System.out.println("Конец списка объектов, всего: " + (i-7));
+                    break;
+                }
+            } catch (Exception e) {
+                System.out.println("Конец списка объектов, всего: " + (i-7));
+                break;
+            }
+
+            registry.getAddresses().add(row.getCell(addressColumnIndex).getStringCellValue());
+            registry.getStatus().add(row.getCell(statusColumnIndex).getStringCellValue().equals("ОКН"));
+            registry.getRegNum().add(row.getCell(regNumColumnIndex).getStringCellValue());
+
+            int indexOfWorkName = workNames.getLongNames().indexOf(row.getCell(workNameColumnIndex).getStringCellValue());
+
+            registry.getWorkNames().add(workNames.getShortNames().get(indexOfWorkName));
+
+            if (typeColumnIndex != 0) {
+                registry.getWorkTypes().add(" " + row.getCell(typeColumnIndex).getStringCellValue());
             } else {
                 registry.getWorkTypes().add("");
             }
 
             try {
-                registry.getTerms().add(Short.valueOf(row.getCell(7).getStringCellValue()));
+                registry.getTerms().add(Short.valueOf(row.getCell(termsColumnIndex).getStringCellValue()));
             } catch (Exception ignored) {
                 try {
-                    registry.getTerms().add((short) Math.rint(row.getCell(7).getNumericCellValue()));
+                    registry.getTerms().add((short) Math.rint(row.getCell(termsColumnIndex).getNumericCellValue()));
                 } catch (Exception e) {
                     System.out.println("Ошибка в поле \"Срок\" в строке " + i);
                 }
             }
 
-            registry.getCost().add(row.getCell(6).getNumericCellValue());
+            registry.getCost().add(row.getCell(costColumnIndex).getNumericCellValue());
 
         }
 

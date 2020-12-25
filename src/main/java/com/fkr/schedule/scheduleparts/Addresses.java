@@ -83,8 +83,8 @@ public class Addresses {
             // Добавляем этапы из файла шаблона (если не лифты)
             WorkStages workStages = null;
             if (isLift == 0) {
-                workStages = WorkStagesBuilder.buildFromWorkStagesFile("E://Этапы/" +
-                        registry.getWorkNames().get(workCount) + ".xlsx");
+                workStages = WorkStagesBuilder.buildFromWorkStagesFile("F://Schedules/Этапы/" +
+                        registry.getWorkNames().get(workCount) + registry.getWorkTypes().get(workCount) + ".xlsx");
             }
 
             // Определяем наличие этапа ОКН/ГАТИ

@@ -19,13 +19,13 @@ public class ScheduleGenerator {
     public static void main(String[] args) throws IOException {
 
         // Выбор файла реестра
-        JFileChooser fileChooser = new JFileChooser("E://Реестры/");
+        JFileChooser fileChooser = new JFileChooser("F://Schedules/Реестры/");
         fileChooser.setMultiSelectionEnabled(true);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fileChooser.setFileHidingEnabled(false);
         int ret = fileChooser.showDialog(null, "Выбрать реестр(ы)");
         if (ret != JFileChooser.APPROVE_OPTION) {
-            System.out.println("Ошибка с файлом реестра(ов)!");
+            System.out.println("Ошибка с файлом реестра!");
         } else {
 
             File[] files = fileChooser.getSelectedFiles();
@@ -33,7 +33,7 @@ public class ScheduleGenerator {
             for(File file: files){
 
                 String registryName=file.getName();
-                Registry registry=RegistryBuilder.buildFromRegistryFile("E://Реестры/" + registryName);
+                Registry registry=RegistryBuilder.buildFromRegistryFile("F://Schedules/Реестры/" + registryName);
 
                 int isLift=0;
                 if (registry.getWorkNames().get(0).equals("Лифт") || registry.getWorkNames().get(0).equals("ТО")) {
@@ -54,7 +54,7 @@ public class ScheduleGenerator {
                 Total.addTotal(sheet, registry, isLift);
 
                 // Сохраняем файл
-                try (OutputStream fileOut=new FileOutputStream("E://Графики/" + registryName)) {
+                try (OutputStream fileOut=new FileOutputStream("F://Schedules/Графики/" + registryName.substring(7))) {
                     mainWB.write(fileOut);
                 } catch (IOException e) {
                     e.printStackTrace();
