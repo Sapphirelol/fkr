@@ -196,30 +196,32 @@ public class Addresses {
                 cell.setCellStyle(tableStyle);
             }
 
-            // Проверка
-            System.out.println(registry.getAddresses().get(workCount) + " || " + registry.getTerms().get(workCount));
-            System.out.println(registry.getWorkNames().get(workCount) + " || ОКН/ГАТИ: " + weeksForPrep);
-
             if (isLift == 1) {
 
                 System.out.println(registry.getTerms().get(workCount));
 
-                if (registry.getWorkNames().get(workCount).equals("Лифт")) {
-                    LiftStages.addLiftStages(
-                            sheet,
-                            Math.round(registry.getTerms().get(workCount) / 7f),
-                            registry.getWorkNames().get(workCount),
-                            addressNum,
-                            workNum
-                    );
-                } else {
-                    LiftStages.addLiftStages(
-                            sheet,
-                            registry.getTerms().get(workCount),
-                            registry.getWorkNames().get(workCount),
-                            addressNum,
-                            workNum
-                    );
+                try {
+                    if (registry.getWorkNames().get(workCount).equals("Лифт")) {
+
+                        LiftStages.addLiftStages(
+                                sheet,
+                                Math.round(registry.getTerms().get(workCount) / 7f),
+                                registry.getWorkNames().get(workCount),
+                                addressNum,
+                                workNum
+                        );
+                    } else {
+
+                        LiftStages.addLiftStages(
+                                sheet,
+                                registry.getTerms().get(workCount),
+                                registry.getWorkNames().get(workCount),
+                                addressNum,
+                                workNum
+                        );
+                    }
+                } catch (Exception e) {
+                    System.out.println("Ошибка в выборе лифт/ТО");
                 }
             } else {
                 assert workStages != null;
@@ -233,46 +235,56 @@ public class Addresses {
                 );
             }
 
-            if (
-                workCount < registry.getAddresses().size()-1 &&
-                !registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount +1)) ||
-                workCount == registry.getAddresses().size()-1
-            ) {
-
-                // Строка для стоимости
-                Row workSumRow = sheet.createRow(sheet.getLastRowNum() + 1);
-
-                Cell workSumNumCell = workSumRow.createCell(0);
-                workSumNumCell.setCellStyle(tableStyle);
-
-                Cell workSumNameCell = workSumRow.createCell(1);
-                workSumNameCell.setCellValue("Итого по объекту");
-                workSumNameCell.setCellStyle(nameStyle);
-
-                double addressCost=0;
-                for (int x = 0; x < registry.getCost().size(); x++) {
-                    if (registry.getAddresses().get(workCount).equals(registry.getAddresses().get(x))) {
-                        addressCost=addressCost+registry.getCost().get(x);
-                    }
-                }
-
-                Cell workSumValCell = workSumRow.createCell(2 + isLift);
-                workSumValCell.setCellValue(addressCost);
-                workSumValCell.setCellStyle(costStyle);
-
-                for (int j = workSumRow.getLastCellNum(); j < sheet.getRow(6).getLastCellNum(); j++) {
-
-                    Cell cell = workSumRow.createCell(j);
-                    cell.setCellStyle(tableStyle);
-
-                }
-
+            try {
                 if (
-                    workCount < registry.getAddresses().size()-1 &&
-                    registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount +1)) ||
-                    workCount > 0 &&
-                    registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount -1))
+                        workCount < registry.getAddresses().size() - 1 &&
+                                !registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount + 1)) ||
+                                workCount == registry.getAddresses().size() - 1
                 ) {
+
+                    // Строка для стоимости
+                    Row workSumRow = sheet.createRow(sheet.getLastRowNum() + 1);
+
+                    Cell workSumNumCell = workSumRow.createCell(0);
+                    workSumNumCell.setCellStyle(tableStyle);
+
+                    Cell workSumNameCell = workSumRow.createCell(1);
+                    workSumNameCell.setCellValue("Итого по объекту");
+                    workSumNameCell.setCellStyle(nameStyle);
+
+                    double addressCost = 0;
+                    for (int x = 0; x < registry.getCost().size(); x++) {
+                        if (registry.getAddresses().get(workCount).equals(registry.getAddresses().get(x))) {
+                            addressCost = addressCost + registry.getCost().get(x);
+                        }
+                    }
+
+                    Cell workSumValCell = workSumRow.createCell(2 + isLift);
+                    workSumValCell.setCellValue(addressCost);
+                    workSumValCell.setCellStyle(costStyle);
+
+                    for (int j = workSumRow.getLastCellNum(); j < sheet.getRow(6).getLastCellNum(); j++) {
+
+                        Cell cell = workSumRow.createCell(j);
+                        cell.setCellStyle(tableStyle);
+
+                    }
+
+                    if (
+                            workCount < registry.getAddresses().size() - 1 &&
+                                    registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount + 1)) ||
+                                    workCount > 0 &&
+                                            registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount - 1))
+                    ) {
+
+                        // Ячейка для стоимости вида работ
+                        Cell workNameSumCell = workRow.createCell(2 + isLift);
+                        workNameSumCell.setCellValue(registry.getCost().get(workCount));
+                        workNameSumCell.setCellStyle(costStyle);
+
+                    }
+
+                } else {
 
                     // Ячейка для стоимости вида работ
                     Cell workNameSumCell = workRow.createCell(2 + isLift);
@@ -280,14 +292,8 @@ public class Addresses {
                     workNameSumCell.setCellStyle(costStyle);
 
                 }
-
-            } else {
-
-                // Ячейка для стоимости вида работ
-                Cell workNameSumCell = workRow.createCell(2 + isLift);
-                workNameSumCell.setCellValue(registry.getCost().get(workCount));
-                workNameSumCell.setCellStyle(costStyle);
-
+            } catch (Exception e) {
+                System.out.println("Ошибка в заполнении этапов");
             }
         }
     }

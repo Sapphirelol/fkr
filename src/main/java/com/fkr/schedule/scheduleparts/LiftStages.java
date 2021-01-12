@@ -15,7 +15,7 @@ class LiftStages {
             String workName,
             int addressNum,
             int workNum
-    ) throws IOException {
+    ) {
 
         // Стили
         CellStyle tableStyle = Styles.createTableStyle(
@@ -34,24 +34,30 @@ class LiftStages {
                 (short) 0
         );
 
-        Workbook wb;
-        if (workName.equals("Лифт")) {
-            wb = new XSSFWorkbook(new FileInputStream(
-                    "E:/Этапы/Лифты/" +
-                            workName +
-                            " " +
-                            weeksFull*7 +
-                            ".xlsx")
-            );
-        } else {
-            wb = new XSSFWorkbook(new FileInputStream(
-                    "E:/Этапы/Лифты/" +
-                            workName +
-                            " " +
-                            weeksFull +
-                            ".xlsx")
-            );
+        Workbook wb = new XSSFWorkbook();
 
+        try {
+            if (workName.equals("Лифт")) {
+                wb = new XSSFWorkbook(new FileInputStream(
+                        "F:/Schedules/Этапы/Лифты/" +
+                                workName +
+                                " " +
+                                weeksFull * 7 +
+                                ".xlsx")
+                );
+            } else {
+                wb = new XSSFWorkbook(new FileInputStream(
+                        "F:/Schedules/Этапы/Лифты/" +
+                                workName +
+                                " " +
+                                weeksFull +
+                                ".xlsx")
+                );
+
+            }
+        } catch (Exception e) {
+            System.out.println("Ошибка в чтении шаблона с этапами");
+            System.out.println("workName - " + workName + " weeksFull - " + weeksFull);
         }
 
         Sheet templateSheet = wb.getSheetAt(0);

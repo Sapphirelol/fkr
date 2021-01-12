@@ -11,17 +11,21 @@ public class Registry {
     private List<String> regNum;
     private List<String> workNames;
     private List<String> workTypes;
-    private List<Short> terms;
+    private List<Integer> terms;
     private List<Double> cost;
 
-    Registry(
+    public Registry() {
+
+    }
+
+    public Registry(
             String name,
             List<String> addresses,
             List<Boolean> status,
             List<String> regNum,
             List<String> workNames,
             List<String> workTypes,
-            List<Short> terms,
+            List<Integer> terms,
             List<Double> cost)
     {
         this.name = name;
@@ -82,11 +86,11 @@ public class Registry {
         this.workTypes = workTypes;
     }
 
-    public List<Short> getTerms() {
+    public List<Integer> getTerms() {
         return terms;
     }
 
-    public void setTerms(List<Short> terms) {
+    public void setTerms(List<Integer> terms) {
         this.terms = terms;
     }
 

@@ -47,22 +47,29 @@ public abstract class RegistryBuilder {
                     break;
                 } else if (addressColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Адрес")) {
                     addressColumnIndex = j;
+                    System.out.println(titleRow.getCell(j).getStringCellValue());
                 } else if (statusColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("КГИОП")) {
                     statusColumnIndex = j;
+                    System.out.println(titleRow.getCell(j).getStringCellValue());
                 } else if (regNumColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("лифт")) {
                     regNumColumnIndex = j;
+                    System.out.println(titleRow.getCell(j).getStringCellValue());
                 } else if (workNameColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Вид работ")) {
                     workNameColumnIndex = j;
-                } else if (termsColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Срок выполнения работ в многоквартирном доме")) {
+                    System.out.println(titleRow.getCell(j).getStringCellValue());
+                } else if (termsColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Срок выполнения работ")) {
                     termsColumnIndex = j;
-                } else if (costColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Сметная стоимость выполнения отдельных видов работ")) {
+                    System.out.println(titleRow.getCell(j).getStringCellValue());
+                } else if (costColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Сметная стоимость")) {
                     costColumnIndex = j;
-                } else if (typeColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Тип")) {
+                    System.out.println(titleRow.getCell(j).getStringCellValue());
+                } else if (typeColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Тип") & !titleRow.getCell(j).getStringCellValue().contains("Тип шахты")) {
                     typeColumnIndex = j;
+                    System.out.println(titleRow.getCell(j).getStringCellValue());
                 }
 
             } catch (Exception e) {
-                System.out.println("Конец шапки таблицы, всего колонок - " + (j+1));
+                System.out.println("Ошибка в шапке реестра");
                 break;
             }
 
@@ -76,11 +83,9 @@ public abstract class RegistryBuilder {
                 if (row.getCell(addressColumnIndex).getStringCellValue().isEmpty() ||
                     row.getCell(addressColumnIndex).getStringCellValue().equals(""))
                 {
-                    System.out.println("Конец списка объектов, всего: " + (i-7));
                     break;
                 }
             } catch (Exception e) {
-                System.out.println("Конец списка объектов, всего: " + (i-7));
                 break;
             }
 
@@ -92,17 +97,21 @@ public abstract class RegistryBuilder {
 
             registry.getWorkNames().add(workNames.getShortNames().get(indexOfWorkName));
 
-            if (typeColumnIndex != 0) {
+            if (
+                    typeColumnIndex != 0 &
+                    !row.getCell(typeColumnIndex).getStringCellValue().isEmpty() &
+                    !row.getCell(typeColumnIndex).getStringCellValue().equals("")
+            ) {
                 registry.getWorkTypes().add(" " + row.getCell(typeColumnIndex).getStringCellValue());
             } else {
                 registry.getWorkTypes().add("");
             }
 
             try {
-                registry.getTerms().add(Short.valueOf(row.getCell(termsColumnIndex).getStringCellValue()));
+                registry.getTerms().add(Integer.valueOf(row.getCell(termsColumnIndex).getStringCellValue()));
             } catch (Exception ignored) {
                 try {
-                    registry.getTerms().add((short) Math.rint(row.getCell(termsColumnIndex).getNumericCellValue()));
+                    registry.getTerms().add((int) Math.rint(row.getCell(termsColumnIndex).getNumericCellValue()));
                 } catch (Exception e) {
                     System.out.println("Ошибка в поле \"Срок\" в строке " + i);
                 }

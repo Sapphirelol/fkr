@@ -55,7 +55,7 @@ class Stages {
             // График выполнения этапа
             int weeksTo = 0;
             int weeksFor = 1;
-            float coefficient = 0.0f;
+            float coefficient;
 
             if (workStages.getWorkName().equals("Ремонт крыши (ж)")) {
 
@@ -104,13 +104,6 @@ class Stages {
                 }
 
             }
-
-            System.out.println(workStages.getNames().get(stageCount));
-            System.out.print(weeksTo + " | ");
-            System.out.print((workStages.getWeeksTo().get(stageCount) * coefficient) + " || ");
-            System.out.print(weeksFor + " | ");
-            System.out.print((workStages.getWeeksFor().get(stageCount) * coefficient) + " || ");
-            System.out.println(coefficient);
 
             // Заполнение %
             int wfp = weeksForPrep;

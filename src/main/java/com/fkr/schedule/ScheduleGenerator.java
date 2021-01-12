@@ -33,29 +33,59 @@ public class ScheduleGenerator {
             for(File file: files){
 
                 String registryName=file.getName();
-                Registry registry=RegistryBuilder.buildFromRegistryFile("F://Schedules/Реестры/" + registryName);
 
-                int isLift=0;
-                if (registry.getWorkNames().get(0).equals("Лифт") || registry.getWorkNames().get(0).equals("ТО")) {
-                    isLift=1;
-                }
+                Registry registry;
+                registry = new Registry();
 
                 // Создаем книгу
                 Workbook mainWB=new XSSFWorkbook();
                 Sheet sheet=mainWB.createSheet("Календарный план");
 
-                // Создаем шапку на основе данных реестра
-                Head.addHead(sheet, registry.getWorkNames().get(0), registry.getMaxTerm(), isLift);
+                System.out.println("Выполняю " + registryName);
 
-                // Заполняем график
-                Addresses.addAddresses(sheet, registry, isLift);
+                try {
+                    try {
+                        registry = RegistryBuilder.buildFromRegistryFile("F://Schedules/Реестры/" + registryName);
+                    } catch (Exception e) {
+                        System.out.println("Ошибка в считывании реестра");
+                    }
 
-                // Итоги
-                Total.addTotal(sheet, registry, isLift);
+
+                    int isLift=0;
+                    if (registry.getWorkNames().get(0).equals("Лифт") || registry.getWorkNames().get(0).equals("ТО")) {
+                    isLift=1;
+                    }
+
+                    // Создаем шапку на основе данных реестра
+                    try {
+                        Head.addHead(sheet, registry.getWorkNames().get(0), registry.getMaxTerm(), isLift);
+                    } catch (Exception e) {
+                        System.out.println("Ошибка в формировании шапки графика");
+                    }
+
+                    // Заполняем график
+                    try {
+                        Addresses.addAddresses(sheet, registry, isLift);
+                    } catch (Exception e) {
+                        System.out.println("Ошибка в заполнении тела графика");
+                    }
+
+                    // Итоги
+                    try {
+                        Total.addTotal(sheet, registry, isLift);
+                    } catch (Exception e) {
+                        System.out.println("Ошибка в заполнении итогов");
+                    }
+
+                } catch (Exception e) {
+                    System.out.println("Ошибка в " + registryName);
+                    continue;
+                }
 
                 // Сохраняем файл
                 try (OutputStream fileOut=new FileOutputStream("F://Schedules/Графики/" + registryName.substring(7))) {
                     mainWB.write(fileOut);
+                    System.out.println("ОК!");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
