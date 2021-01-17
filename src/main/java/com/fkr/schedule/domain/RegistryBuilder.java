@@ -27,7 +27,7 @@ public abstract class RegistryBuilder {
                 new ArrayList<>()
         );
 
-        WorkNames workNames = WorkNamesBuilder.buildFromWorkNamesFile("F:/Schedules/Виды работ.xlsx");
+        WorkNames workNames = WorkNamesBuilder.buildFromWorkNamesFile("Виды работ.xlsx");
 
         Row titleRow = sheet.getRow(6);
         int addressColumnIndex = 0,

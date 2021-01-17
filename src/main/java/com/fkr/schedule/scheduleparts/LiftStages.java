@@ -39,7 +39,7 @@ class LiftStages {
         try {
             if (workName.equals("Лифт")) {
                 wb = new XSSFWorkbook(new FileInputStream(
-                        "F:/Schedules/Этапы/Лифты/" +
+                        "Этапы/Лифты/" +
                                 workName +
                                 " " +
                                 weeksFull * 7 +
@@ -47,7 +47,7 @@ class LiftStages {
                 );
             } else {
                 wb = new XSSFWorkbook(new FileInputStream(
-                        "F:/Schedules/Этапы/Лифты/" +
+                        "Этапы/Лифты/" +
                                 workName +
                                 " " +
                                 weeksFull +

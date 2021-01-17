@@ -19,7 +19,7 @@ public class ScheduleGenerator {
     public static void main(String[] args) throws IOException {
 
         // Выбор файла реестра
-        JFileChooser fileChooser = new JFileChooser("F://Schedules/Реестры/");
+        JFileChooser fileChooser = new JFileChooser("Реестры/");
         fileChooser.setMultiSelectionEnabled(true);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fileChooser.setFileHidingEnabled(false);
@@ -45,7 +45,7 @@ public class ScheduleGenerator {
 
                 try {
                     try {
-                        registry = RegistryBuilder.buildFromRegistryFile("F://Schedules/Реестры/" + registryName);
+                        registry = RegistryBuilder.buildFromRegistryFile("Реестры/" + registryName);
                     } catch (Exception e) {
                         System.out.println("Ошибка в считывании реестра");
                     }
@@ -83,7 +83,7 @@ public class ScheduleGenerator {
                 }
 
                 // Сохраняем файл
-                try (OutputStream fileOut=new FileOutputStream("F://Schedules/Графики/" + registryName.substring(7))) {
+                try (OutputStream fileOut=new FileOutputStream("Графики/" + registryName.substring(7))) {
                     mainWB.write(fileOut);
                     System.out.println("ОК!");
                 } catch (IOException e) {

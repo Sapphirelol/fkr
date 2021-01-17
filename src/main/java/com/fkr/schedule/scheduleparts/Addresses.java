@@ -83,7 +83,7 @@ public class Addresses {
             // Добавляем этапы из файла шаблона (если не лифты)
             WorkStages workStages = null;
             if (isLift == 0) {
-                workStages = WorkStagesBuilder.buildFromWorkStagesFile("F://Schedules/Этапы/" +
+                workStages = WorkStagesBuilder.buildFromWorkStagesFile("Этапы/" +
                         registry.getWorkNames().get(workCount) + registry.getWorkTypes().get(workCount) + ".xlsx");
             }
 
