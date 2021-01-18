@@ -52,7 +52,7 @@ public class ScheduleGenerator {
 
 
                     int isLift=0;
-                    if (registry.getWorkNames().get(0).equals("Лифт") || registry.getWorkNames().get(0).equals("ТО")) {
+                    if (registry.getWorkNames().get(0).contains("Лифт") || registry.getWorkNames().get(0).equals("ТО")) {
                     isLift=1;
                     }
 

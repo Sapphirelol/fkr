@@ -83,26 +83,38 @@ public class Addresses {
             // Добавляем этапы из файла шаблона (если не лифты)
             WorkStages workStages = null;
             if (isLift == 0) {
-                workStages = WorkStagesBuilder.buildFromWorkStagesFile("Этапы/" +
-                        registry.getWorkNames().get(workCount) + registry.getWorkTypes().get(workCount) + ".xlsx");
+                if (registry.getWorkTypes().get(workCount).equals("")) {
+                    workStages = WorkStagesBuilder.buildFromWorkStagesFile("Этапы/" +
+                            registry.getWorkNames().get(workCount) + ".xlsx");
+                } else {
+                    workStages = WorkStagesBuilder.buildFromWorkStagesFile("Этапы/" +
+                            registry.getWorkNames().get(workCount) + " " + registry.getWorkTypes().get(workCount) + ".xlsx");
+                }
             }
 
             // Определяем наличие этапа ОКН/ГАТИ
             int weeksForPrep = 0;
             
             // Определение недель на подготовительный этап если необходим ордер ГАТИ
-            if (
-                registry.getWorkNames().get(workCount).equals("КР жесткая") ||
-                registry.getWorkNames().get(workCount).equals("ФС штукатурный") ||
-                registry.getWorkNames().get(workCount).equals("ФН")
-            ) {
-                weeksForPrep = 3;
+            try {
+                if (
+                        registry.getWorkTypes().get(workCount).equals("жесткая") ||
+                        registry.getWorkTypes().get(workCount).equals("штукатурный") ||
+                        registry.getWorkNames().get(workCount).equals("ФН")
+                ) {
+                    weeksForPrep = 3;
+                }
+            } catch (Exception e) {
+                System.out.println(registry.getWorkNames().get(workCount));
             }
+
 
             // Определение недель на подготовительный этап если необходимо разрешение КГИОП
             if (registry.getStatus().get(workCount)) {
                 weeksForPrep = 5;
             }
+
+            System.out.println(weeksForPrep);
 
             if (
                     weeksForPrep > 0 &
@@ -174,7 +186,7 @@ public class Addresses {
             String workName;
 
             if (workStages == null) {
-                if (registry.getWorkNames().get(workCount).equals("Лифт")) {
+                if (registry.getWorkNames().get(workCount).equals("Лифт") || registry.getWorkNames().get(workCount).equals("ЛифтСМР")) {
                     workName = "Ремонт или замена лифтового оборудования, ремонт лифтовых шахт";
                 } else if (registry.getWorkNames().get(workCount).equals("ТО")) {
                     workName = "Полное техническое освидетельствование лифта после замены лифтового оборудования";
@@ -201,7 +213,7 @@ public class Addresses {
                 System.out.println(registry.getTerms().get(workCount));
 
                 try {
-                    if (registry.getWorkNames().get(workCount).equals("Лифт")) {
+                    if (registry.getWorkNames().get(workCount).contains("Лифт")) {
 
                         LiftStages.addLiftStages(
                                 sheet,

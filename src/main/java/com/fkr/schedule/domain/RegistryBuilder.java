@@ -42,7 +42,11 @@ public abstract class RegistryBuilder {
 
             try {
 
-                if (titleRow.getCell(j).getStringCellValue().isEmpty() || titleRow.getCell(j).getStringCellValue().equals("")) {
+                if (
+                        titleRow.getCell(j).getStringCellValue().isEmpty() ||
+                        titleRow.getCell(j).getStringCellValue().equals("") ||
+                        titleRow.getCell(j)==null
+                ) {
                     System.out.println("Конец шапки таблицы, всего колонок - " + (j+1));
                     break;
                 } else if (addressColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Адрес")) {
@@ -69,11 +73,12 @@ public abstract class RegistryBuilder {
                 }
 
             } catch (Exception e) {
-                System.out.println("Ошибка в шапке реестра");
                 break;
             }
 
         }
+
+        int termShiftForLiftProject=0;
 
         for (int i=7; i<=sheet.getLastRowNum(); i++) {
 
@@ -97,12 +102,8 @@ public abstract class RegistryBuilder {
 
             registry.getWorkNames().add(workNames.getShortNames().get(indexOfWorkName));
 
-            if (
-                    typeColumnIndex != 0 &
-                    !row.getCell(typeColumnIndex).getStringCellValue().isEmpty() &
-                    !row.getCell(typeColumnIndex).getStringCellValue().equals("")
-            ) {
-                registry.getWorkTypes().add(" " + row.getCell(typeColumnIndex).getStringCellValue());
+            if (typeColumnIndex != 0) {
+                registry.getWorkTypes().add(row.getCell(typeColumnIndex).getStringCellValue());
             } else {
                 registry.getWorkTypes().add("");
             }
@@ -119,9 +120,13 @@ public abstract class RegistryBuilder {
 
             registry.getCost().add(row.getCell(costColumnIndex).getNumericCellValue());
 
+            if (registry.getWorkNames().get(i).equals("ЛифтПД")) {
+                termShiftForLiftProject = registry.getTerms().get(i);
+            }
+
         }
 
-        registry.setMaxTerm(Collections.max(registry.getTerms()));
+        registry.setMaxTerm(Collections.max(registry.getTerms()) + termShiftForLiftProject);
 
         return registry;
     }
