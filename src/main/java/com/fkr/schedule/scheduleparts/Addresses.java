@@ -184,14 +184,22 @@ public class Addresses {
             String workName;
 
             if (workStages == null) {
-                if (registry.getWorkNames().get(workCount).equals("Лифт") || registry.getWorkNames().get(workCount).equals("ЛифтСМР")) {
-                    workName = "Ремонт или замена лифтового оборудования, ремонт лифтовых шахт";
-                } else if (registry.getWorkNames().get(workCount).equals("ЛифтПД")) {
-                    workName = "Разработка проектной документации на проведение капитального ремонта общего имущества" +
-                            "в многоквартирных домах (на ремонт, замену, модернизацию лифтов)";
-                } else if (registry.getWorkNames().get(workCount).equals("ТО")) {
-                    workName = "Полное техническое освидетельствование лифта после замены лифтового оборудования";
-                } else workName = "";
+                switch (registry.getWorkNames().get(workCount)) {
+                    case "Лифт":
+                    case "ЛифтСМР":
+                        workName = "Ремонт или замена лифтового оборудования, ремонт лифтовых шахт";
+                        break;
+                    case "ЛифтПД":
+                        workName = "Разработка проектной документации на проведение капитального ремонта общего имущества" +
+                                "в многоквартирных домах (на ремонт, замену, модернизацию лифтов)";
+                        break;
+                    case "ТО":
+                        workName = "Полное техническое освидетельствование лифта после замены лифтового оборудования";
+                        break;
+                    default:
+                        workName = "";
+                        break;
+                }
 
                 Cell workRegNumCell = workRow.createCell(2);
                 workRegNumCell.setCellValue(registry.getRegNum().get(workCount));
