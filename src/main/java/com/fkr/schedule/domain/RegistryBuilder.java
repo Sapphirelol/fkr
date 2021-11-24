@@ -6,12 +6,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public abstract class RegistryBuilder {
-    public static Registry buildFromRegistryFile(String file) throws IOException {
+    public static Registry buildFromRegistryFile(String file) throws Exception {
 
         Workbook wb = new XSSFWorkbook(new FileInputStream(file));
         Sheet sheet = wb.getSheet("Реестр");
@@ -38,74 +37,100 @@ public abstract class RegistryBuilder {
                 costColumnIndex = 0,
                 typeColumnIndex = 0;
 
-        for (int j=0; j<20; j++) {
+        for (int j=0; j<titleRow.getLastCellNum(); j++) {
 
             try {
 
-                if (
-                        titleRow.getCell(j).getStringCellValue().isEmpty() ||
-                        titleRow.getCell(j).getStringCellValue().equals("") ||
-                        titleRow.getCell(j)==null
-                ) {
-                    System.out.println("Конец шапки таблицы, всего колонок - " + (j+1));
-                    break;
-                } else if (addressColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Адрес")) {
+                if (addressColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("Адрес")) {
                     addressColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (statusColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("КГИОП")) {
+                } else if (statusColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("КГИОП")) {
                     statusColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (regNumColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("лифт")) {
+                } else if (regNumColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("лифт")) {
                     regNumColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (workNameColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Вид работ")) {
+                } else if (workNameColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("Вид работ")) {
                     workNameColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (termsColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Срок выполнения работ")) {
+                } else if (termsColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("Срок выполнения работ")) {
                     termsColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (costColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Сметная стоимость")) {
+                } else if (costColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("Сметная стоимость")) {
                     costColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (typeColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Тип") & !titleRow.getCell(j).getStringCellValue().contains("Тип шахты")) {
+                } else if (typeColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("Тип") && !titleRow.getCell(j).getStringCellValue().contains("Тип шахты")) {
                     typeColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
                 }
 
             } catch (Exception e) {
+                System.out.println("Ошибка при чтении шапки реестра, колонка - " + (j+1));
                 break;
             }
 
         }
 
-        int termShiftForLiftProject=0;
+        int termShiftForLiftProject = 0;
 
-        for (int i=7; i<=sheet.getLastRowNum(); i++) {
+        for (int i=7; i<sheet.getLastRowNum(); i++) {
 
             Row row = sheet.getRow(i);
 
             try {
-                if (row.getCell(addressColumnIndex).getStringCellValue().isEmpty() ||
-                    row.getCell(addressColumnIndex).getStringCellValue().equals(""))
-                {
+                if (
+                        row.getCell(addressColumnIndex) == null ||
+                        row.getCell(addressColumnIndex).getStringCellValue().isEmpty() ||
+                        row.getCell(addressColumnIndex).getStringCellValue().equals("")
+                ) {
+                    System.out.println("Конец реестра");
                     break;
                 }
             } catch (Exception e) {
+                System.out.println("Конец реестра");
                 break;
             }
 
-            registry.getAddresses().add(row.getCell(addressColumnIndex).getStringCellValue());
-            registry.getStatus().add(row.getCell(statusColumnIndex).getStringCellValue().equals("ОКН"));
-            registry.getRegNum().add(row.getCell(regNumColumnIndex).getStringCellValue());
+            try {
+                registry.getAddresses().add(row.getCell(addressColumnIndex).getStringCellValue());
+            } catch (Exception e) {
+                System.out.println("Ошибка в чтении адреса");
+            }
 
-            int indexOfWorkName = workNames.getLongNames().indexOf(row.getCell(workNameColumnIndex).getStringCellValue());
+            try {
+                registry.getStatus().add(row.getCell(statusColumnIndex).getStringCellValue().contains("ОКН"));
+            } catch (Exception e) {
+                System.out.println("Ошибка в чтении статуса");
+            }
 
-            registry.getWorkNames().add(workNames.getShortNames().get(indexOfWorkName));
+            try {
+                registry.getRegNum().add(row.getCell(regNumColumnIndex).getStringCellValue());
+            } catch (Exception e) {
+                System.out.println("Ошибка в чтении рег.№");
+            }
 
-            if (typeColumnIndex != 0) {
-                registry.getWorkTypes().add(row.getCell(typeColumnIndex).getStringCellValue());
-            } else {
-                registry.getWorkTypes().add("");
+            int indexOfWorkName = 0;
+
+            try {
+                indexOfWorkName = workNames.getLongNames().indexOf(row.getCell(workNameColumnIndex).getStringCellValue());
+            } catch (Exception e) {
+                System.out.println("Ошибка при определении вида работ в шаблонах");
+            }
+
+            try {
+                registry.getWorkNames().add(workNames.getShortNames().get(indexOfWorkName));
+            } catch (Exception e) {
+                System.out.println("Ошибка в чтении ...");
+            }
+
+            try {
+                if (typeColumnIndex != 0) {
+                    registry.getWorkTypes().add(row.getCell(typeColumnIndex).getStringCellValue());
+                } else {
+                    registry.getWorkTypes().add("");
+                }
+            } catch (Exception e) {
+                System.out.println("Ошибка при добавлении подвида работ");
             }
 
             try {
@@ -118,15 +143,29 @@ public abstract class RegistryBuilder {
                 }
             }
 
-            registry.getCost().add(row.getCell(costColumnIndex).getNumericCellValue());
+            try {
+                registry.getCost().add(row.getCell(costColumnIndex).getNumericCellValue());
+            } catch (Exception ignored) {
+                try {
+                    registry.getCost().add(Double.valueOf(row.getCell(costColumnIndex).getStringCellValue()));
+                } catch (Exception e) {
+                    System.out.println("Ошибка в поле \"Стоимость\" в строке " + i);
+                }
+            }
 
-            if (registry.getWorkNames().get(i).equals("ЛифтПД")) {
-                termShiftForLiftProject = registry.getTerms().get(i);
+            if (registry.getWorkNames().get(i-7).equals("ЛифтПД")) {
+                termShiftForLiftProject = registry.getTerms().get(i-7);
             }
 
         }
 
-        registry.setMaxTerm(Collections.max(registry.getTerms()) + termShiftForLiftProject);
+        if (registry.getTerms().isEmpty()) {
+            System.out.println("Нет данных для определения максимального срока");
+        } else {
+            registry.setMaxTerm(Collections.max(registry.getTerms()) + termShiftForLiftProject);
+        }
+
+        System.out.println("Данные из реестра получены");
 
         return registry;
     }

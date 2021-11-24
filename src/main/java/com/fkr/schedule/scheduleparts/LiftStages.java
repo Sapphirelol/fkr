@@ -5,7 +5,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 
 class LiftStages {
 
@@ -37,7 +36,7 @@ class LiftStages {
         Workbook wb = new XSSFWorkbook();
 
         try {
-            if (workName.equals("Лифт")) {
+            if (workName.contains("Лифт")) {
                 wb = new XSSFWorkbook(new FileInputStream(
                         "Этапы/Лифты/" +
                                 workName +
@@ -62,7 +61,7 @@ class LiftStages {
 
         Sheet templateSheet = wb.getSheetAt(0);
 
-        int stageCount = workName.equals("ТО")?3:8;
+        int stageCount = workName.equals("ТО") || workName.equals("ЛифтПД") ? 3 : 8;
 
         for (int k = 0; k < stageCount; k++) {
 
@@ -87,12 +86,14 @@ class LiftStages {
             Cell stageSumCell = stageRow.createCell(3);
             stageSumCell.setCellStyle(tableStyle);
 
+            int shiftForProject = workName.equals("ЛифтСМР") ? 12 : 0;
+            // Заполнение этапа
             for (int j = 0; j < sheet.getRow(6).getLastCellNum() - 4; j++) {
 
                 Cell stageCell = stageRow.createCell(4 + j);
                 stageCell.setCellStyle(tableStyle);
 
-                if (j < weeksFull) {
+                if (j < (weeksFull + shiftForProject)) {
 
                     double percent = templateSheet.getRow(k).getCell(2 + j).getNumericCellValue();
 

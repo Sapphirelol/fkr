@@ -14,11 +14,7 @@ public class Registry {
     private List<Integer> terms;
     private List<Double> cost;
 
-    public Registry() {
-
-    }
-
-    public Registry(
+    Registry(
             String name,
             List<String> addresses,
             List<Boolean> status,

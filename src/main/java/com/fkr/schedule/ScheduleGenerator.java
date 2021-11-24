@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class ScheduleGenerator {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
         // Выбор файла реестра
         JFileChooser fileChooser = new JFileChooser("Реестры/");
@@ -32,10 +32,7 @@ public class ScheduleGenerator {
 
             for(File file: files){
 
-                String registryName=file.getName();
-
-                Registry registry;
-                registry = new Registry();
+                String registryName = file.getName();
 
                 // Создаем книгу
                 Workbook mainWB=new XSSFWorkbook();
@@ -43,13 +40,15 @@ public class ScheduleGenerator {
 
                 System.out.println("Выполняю " + registryName);
 
+                Registry registry = null;
+
                 try {
+
                     try {
                         registry = RegistryBuilder.buildFromRegistryFile("Реестры/" + registryName);
                     } catch (Exception e) {
-                        System.out.println("Ошибка в считывании реестра");
+                        System.out.println("Ошибка при переносе данных из реестра");
                     }
-
 
                     int isLift=0;
                     if (registry.getWorkNames().get(0).contains("Лифт") || registry.getWorkNames().get(0).equals("ТО")) {

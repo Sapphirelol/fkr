@@ -102,7 +102,7 @@ public class Addresses {
                         registry.getWorkTypes().get(workCount).equals("штукатурный") ||
                         registry.getWorkNames().get(workCount).equals("ФН")
                 ) {
-                    weeksForPrep = 3;
+                    weeksForPrep = 1;
                 }
             } catch (Exception e) {
                 System.out.println(registry.getWorkNames().get(workCount));
@@ -113,8 +113,6 @@ public class Addresses {
             if (registry.getStatus().get(workCount)) {
                 weeksForPrep = 5;
             }
-
-            System.out.println(weeksForPrep);
 
             if (
                     weeksForPrep > 0 &
@@ -188,6 +186,9 @@ public class Addresses {
             if (workStages == null) {
                 if (registry.getWorkNames().get(workCount).equals("Лифт") || registry.getWorkNames().get(workCount).equals("ЛифтСМР")) {
                     workName = "Ремонт или замена лифтового оборудования, ремонт лифтовых шахт";
+                } else if (registry.getWorkNames().get(workCount).equals("ЛифтПД")) {
+                    workName = "Разработка проектной документации на проведение капитального ремонта общего имущества" +
+                            "в многоквартирных домах (на ремонт, замену, модернизацию лифтов)";
                 } else if (registry.getWorkNames().get(workCount).equals("ТО")) {
                     workName = "Полное техническое освидетельствование лифта после замены лифтового оборудования";
                 } else workName = "";
@@ -209,8 +210,6 @@ public class Addresses {
             }
 
             if (isLift == 1) {
-
-                System.out.println(registry.getTerms().get(workCount));
 
                 try {
                     if (registry.getWorkNames().get(workCount).contains("Лифт")) {
