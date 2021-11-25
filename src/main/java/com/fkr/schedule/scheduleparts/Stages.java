@@ -12,7 +12,8 @@ class Stages {
             int weeksFull,
             int weeksForPrep,
             int addressNum,
-            int workNum
+            int workNum,
+            int designTerm
     ) {
 
         CellStyle tableStyle = Styles.createTableStyle(
@@ -73,7 +74,7 @@ class Stages {
                     weeksTo = Math.round(workStages.getWeeksTo().get(stageCount) * coefficient) + weeksForPrep;
                     weeksFor = Math.max(Math.round(workStages.getWeeksFor().get(stageCount) * coefficient), 1);
 
-                    if ((weeksFor+weeksTo)>weeksFull) {
+                    if ((weeksFor + weeksTo) > weeksFull) {
 
                         weeksTo = weeksFull - 1;
                         weeksFor = 1;
@@ -96,7 +97,7 @@ class Stages {
                 weeksTo = Math.abs(Math.round(workStages.getWeeksTo().get(stageCount) * coefficient));
                 weeksFor = Math.max(Math.round(workStages.getWeeksFor().get(stageCount) * coefficient), 1);
 
-                if ((weeksFor+weeksTo)>(weeksFull-weeksForPrep)) {
+                if ((weeksFor + weeksTo) > (weeksFull - weeksForPrep)) {
 
                     weeksTo = weeksFull - weeksForPrep - 1;
                     weeksFor = 1;
@@ -113,10 +114,10 @@ class Stages {
 
             int percent = (100 - 100 % weeksFor) / weeksFor;
             int b = 100 % weeksFor;
-            for (int m=0; m < (weeksFull - weeksForPrep); m++) {
+            for (int m=0; m < (weeksFull + designTerm - weeksForPrep); m++) {
                 Cell cell = stageRow.createCell(3 + weeksForPrep + m);
                 cell.setCellStyle(tableStyle);
-                if ((weeksTo <= m) && (weeksFor > m - weeksTo)) {
+                if ((weeksTo + designTerm <= m) & (weeksFor > m - weeksTo - designTerm)) {
                     if (b > 0) {
                         cell.setCellValue(percent + 1);
                         b = b - 1;

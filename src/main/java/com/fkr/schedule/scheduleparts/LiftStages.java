@@ -13,7 +13,8 @@ class LiftStages {
             int weeksFull,
             String workName,
             int addressNum,
-            int workNum
+            int workNum,
+            int designTerm
     ) {
 
         // Стили
@@ -86,14 +87,14 @@ class LiftStages {
             Cell stageSumCell = stageRow.createCell(3);
             stageSumCell.setCellStyle(tableStyle);
 
-            int shiftForProject = workName.equals("ЛифтСМР") ? 12 : 0;
+
             // Заполнение этапа
-            for (int j = 0; j < sheet.getRow(6).getLastCellNum() - 4; j++) {
+            for (int j=designTerm; j < sheet.getRow(6).getLastCellNum() - 4; j++) {
 
                 Cell stageCell = stageRow.createCell(4 + j);
                 stageCell.setCellStyle(tableStyle);
 
-                if (j < (weeksFull + shiftForProject)) {
+                if (j < weeksFull) {
 
                     double percent = templateSheet.getRow(k).getCell(2 + j).getNumericCellValue();
 

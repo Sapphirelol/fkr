@@ -50,10 +50,10 @@ public class ScheduleGenerator {
                         System.out.println("Ошибка при переносе данных из реестра");
                     }
 
+                    // Если в реестр на лифты, то нужен доп.столбец для указания рег.№№
                     int isLift=0;
-                    if (registry.getWorkNames().get(0).contains("Лифт") || registry.getWorkNames().get(0).equals("ТО")) {
-                    isLift=1;
-                    }
+                    if (registry.getWorkNames().get(0).contains("Лифт") || registry.getWorkNames().get(0).equals("ТО") ||
+                    registry.getWorkNames().get(0).contains("ЛО_")) isLift=1;
 
                     // Создаем шапку на основе данных реестра
                     try {

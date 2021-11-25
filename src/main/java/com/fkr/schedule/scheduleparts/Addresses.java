@@ -56,9 +56,9 @@ public class Addresses {
         );
 
 
-        for (int workCount=0; workCount < registry.getAddresses().size(); workCount++) {
+        for (int workIndex=0; workIndex < registry.getAddresses().size(); workIndex++) {
 
-            if (workCount ==0 || !registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount -1))) {
+            if (workIndex ==0 || !registry.getAddresses().get(workIndex).equals(registry.getAddresses().get(workIndex -1))) {
 
                 // Строка под адрес
                 Row addressRow = sheet.createRow(sheet.getLastRowNum() + 1);
@@ -70,7 +70,7 @@ public class Addresses {
 
                 // Ячейка для наименования адреса
                 Cell addressNameCell = addressRow.createCell(1);
-                addressNameCell.setCellValue(registry.getAddresses().get(workCount));
+                addressNameCell.setCellValue(registry.getAddresses().get(workIndex));
                 addressNameCell.setCellStyle(addressStyle);
 
                 for (int j = addressRow.getLastCellNum(); j < sheet.getRow(6).getLastCellNum(); j++) {
@@ -82,13 +82,13 @@ public class Addresses {
 
             // Добавляем этапы из файла шаблона (если не лифты)
             WorkStages workStages = null;
-            if (isLift == 0) {
-                if (registry.getWorkTypes().get(workCount).equals("")) {
+            if (isLift == 0 || registry.getWorkNames().get(workIndex).contains("ЛО_")) {
+                if (registry.getWorkTypes().get(workIndex).equals("")) {
                     workStages = WorkStagesBuilder.buildFromWorkStagesFile("Этапы/" +
-                            registry.getWorkNames().get(workCount) + ".xlsx");
+                            registry.getWorkNames().get(workIndex) + ".xlsx");
                 } else {
                     workStages = WorkStagesBuilder.buildFromWorkStagesFile("Этапы/" +
-                            registry.getWorkNames().get(workCount) + " " + registry.getWorkTypes().get(workCount) + ".xlsx");
+                            registry.getWorkNames().get(workIndex) + " " + registry.getWorkTypes().get(workIndex) + ".xlsx");
                 }
             }
 
@@ -98,25 +98,28 @@ public class Addresses {
             // Определение недель на подготовительный этап если необходим ордер ГАТИ
             try {
                 if (
-                        registry.getWorkTypes().get(workCount).equals("жесткая") ||
-                        registry.getWorkTypes().get(workCount).equals("штукатурный") ||
-                        registry.getWorkNames().get(workCount).equals("ФН")
+                        registry.getWorkTypes().get(workIndex).equals("жесткая") ||
+                        registry.getWorkTypes().get(workIndex).equals("штукатурный") ||
+                        registry.getWorkNames().get(workIndex).equals("ФН")
                 ) {
                     weeksForPrep = 1;
                 }
             } catch (Exception e) {
-                System.out.println(registry.getWorkNames().get(workCount));
+                System.out.println(registry.getWorkNames().get(workIndex));
             }
 
 
             // Определение недель на подготовительный этап если необходимо разрешение КГИОП
-            if (registry.getStatus().get(workCount)) {
+            if (registry.getStatus().get(workIndex)) {
                 weeksForPrep = 5;
             }
 
             if (
                     weeksForPrep > 0 &
-                    (workCount == 0 || !registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount -1)))
+                    (
+                        workIndex == 0 ||
+                        !registry.getAddresses().get(workIndex).equals(registry.getAddresses().get(workIndex -1))
+                    )
             ) {
 
                 Row prepRow = sheet.createRow(sheet.getLastRowNum() + 1);
@@ -171,7 +174,7 @@ public class Addresses {
             // Ячейка для номера вида работ
             Cell workNumCell = workRow.createCell(0);
 
-            if (workCount >0 && !registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount -1))) {
+            if (workIndex >0 && !registry.getAddresses().get(workIndex).equals(registry.getAddresses().get(workIndex -1))) {
                 workNum = 0;
             }
 
@@ -184,14 +187,9 @@ public class Addresses {
             String workName;
 
             if (workStages == null) {
-                switch (registry.getWorkNames().get(workCount)) {
+                switch (registry.getWorkNames().get(workIndex)) {
                     case "Лифт":
-                    case "ЛифтСМР":
                         workName = "Ремонт или замена лифтового оборудования, ремонт лифтовых шахт";
-                        break;
-                    case "ЛифтПД":
-                        workName = "Разработка проектной документации на проведение капитального ремонта общего имущества" +
-                                "в многоквартирных домах (на ремонт, замену, модернизацию лифтов)";
                         break;
                     case "ТО":
                         workName = "Полное техническое освидетельствование лифта после замены лифтового оборудования";
@@ -202,7 +200,7 @@ public class Addresses {
                 }
 
                 Cell workRegNumCell = workRow.createCell(2);
-                workRegNumCell.setCellValue(registry.getRegNum().get(workCount));
+                workRegNumCell.setCellValue(registry.getRegNum().get(workIndex));
                 workRegNumCell.setCellStyle(tableStyle);
 
             } else {
@@ -217,26 +215,30 @@ public class Addresses {
                 cell.setCellStyle(tableStyle);
             }
 
-            if (isLift == 1) {
+            int designTerm = registry.getWorkNames().get(workIndex).contains("ПД") ? registry.getDesignTerm() / 7 : 0;
+
+            if (isLift == 1 & !registry.getWorkNames().get(workIndex).contains("ЛО_")) {
 
                 try {
-                    if (registry.getWorkNames().get(workCount).contains("Лифт")) {
+                    if (registry.getWorkNames().get(workIndex).contains("Лифт")) {
 
                         LiftStages.addLiftStages(
                                 sheet,
-                                Math.round(registry.getTerms().get(workCount) / 7f),
-                                registry.getWorkNames().get(workCount),
+                                Math.round(registry.getTerms().get(workIndex) / 7f),
+                                registry.getWorkNames().get(workIndex),
                                 addressNum,
-                                workNum
+                                workNum,
+                                designTerm
                         );
                     } else {
 
                         LiftStages.addLiftStages(
                                 sheet,
-                                registry.getTerms().get(workCount),
-                                registry.getWorkNames().get(workCount),
+                                registry.getTerms().get(workIndex),
+                                registry.getWorkNames().get(workIndex),
                                 addressNum,
-                                workNum
+                                workNum,
+                                designTerm
                         );
                     }
                 } catch (Exception e) {
@@ -247,18 +249,19 @@ public class Addresses {
                 Stages.addStages(
                         sheet,
                         workStages,
-                        Math.round(registry.getTerms().get(workCount) / 7f),
+                        Math.round(registry.getTerms().get(workIndex) / 7f),
                         weeksForPrep,
                         addressNum,
-                        workNum
+                        workNum,
+                        designTerm
                 );
             }
 
             try {
                 if (
-                        workCount < registry.getAddresses().size() - 1 &&
-                                !registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount + 1)) ||
-                                workCount == registry.getAddresses().size() - 1
+                        workIndex < registry.getAddresses().size() - 1 &&
+                                !registry.getAddresses().get(workIndex).equals(registry.getAddresses().get(workIndex + 1)) ||
+                                workIndex == registry.getAddresses().size() - 1
                 ) {
 
                     // Строка для стоимости
@@ -273,7 +276,7 @@ public class Addresses {
 
                     double addressCost = 0;
                     for (int x = 0; x < registry.getCost().size(); x++) {
-                        if (registry.getAddresses().get(workCount).equals(registry.getAddresses().get(x))) {
+                        if (registry.getAddresses().get(workIndex).equals(registry.getAddresses().get(x))) {
                             addressCost = addressCost + registry.getCost().get(x);
                         }
                     }
@@ -290,15 +293,15 @@ public class Addresses {
                     }
 
                     if (
-                            workCount < registry.getAddresses().size() - 1 &&
-                                    registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount + 1)) ||
-                                    workCount > 0 &&
-                                            registry.getAddresses().get(workCount).equals(registry.getAddresses().get(workCount - 1))
+                            workIndex < registry.getAddresses().size() - 1 &&
+                                    registry.getAddresses().get(workIndex).equals(registry.getAddresses().get(workIndex + 1)) ||
+                                    workIndex > 0 &&
+                                            registry.getAddresses().get(workIndex).equals(registry.getAddresses().get(workIndex - 1))
                     ) {
 
                         // Ячейка для стоимости вида работ
                         Cell workNameSumCell = workRow.createCell(2 + isLift);
-                        workNameSumCell.setCellValue(registry.getCost().get(workCount));
+                        workNameSumCell.setCellValue(registry.getCost().get(workIndex));
                         workNameSumCell.setCellStyle(costStyle);
 
                     }
@@ -307,7 +310,7 @@ public class Addresses {
 
                     // Ячейка для стоимости вида работ
                     Cell workNameSumCell = workRow.createCell(2 + isLift);
-                    workNameSumCell.setCellValue(registry.getCost().get(workCount));
+                    workNameSumCell.setCellValue(registry.getCost().get(workIndex));
                     workNameSumCell.setCellStyle(costStyle);
 
                 }

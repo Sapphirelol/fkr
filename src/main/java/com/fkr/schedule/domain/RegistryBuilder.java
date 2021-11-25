@@ -41,25 +41,25 @@ public abstract class RegistryBuilder {
 
             try {
 
-                if (addressColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("Адрес")) {
+                if (addressColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Адрес")) {
                     addressColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (statusColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("КГИОП")) {
+                } else if (statusColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("КГИОП")) {
                     statusColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (regNumColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("лифт")) {
+                } else if (regNumColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("лифт")) {
                     regNumColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (workNameColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("Вид работ")) {
+                } else if (workNameColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Вид работ")) {
                     workNameColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (termsColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("Срок выполнения работ")) {
+                } else if (termsColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Срок выполнения работ")) {
                     termsColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (costColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("Сметная стоимость")) {
+                } else if (costColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Сметная стоимость")) {
                     costColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
-                } else if (typeColumnIndex == 0 && titleRow.getCell(j).getStringCellValue().contains("Тип") && !titleRow.getCell(j).getStringCellValue().contains("Тип шахты")) {
+                } else if (typeColumnIndex == 0 & titleRow.getCell(j).getStringCellValue().contains("Тип") & !titleRow.getCell(j).getStringCellValue().contains("Тип шахты")) {
                     typeColumnIndex = j;
                     System.out.println(titleRow.getCell(j).getStringCellValue());
                 }
@@ -71,11 +71,11 @@ public abstract class RegistryBuilder {
 
         }
 
-        int termShiftForLiftProject = 0;
+        int startRowNum = 7;
 
-        for (int i=7; i<sheet.getLastRowNum(); i++) {
+        for (int i=startRowNum; i<sheet.getLastRowNum(); i++){
 
-            Row row = sheet.getRow(i);
+            Row row=sheet.getRow(i);
 
             try {
                 if (
@@ -109,10 +109,10 @@ public abstract class RegistryBuilder {
                 System.out.println("Ошибка в чтении рег.№");
             }
 
-            int indexOfWorkName = 0;
+            int indexOfWorkName=0;
 
             try {
-                indexOfWorkName = workNames.getLongNames().indexOf(row.getCell(workNameColumnIndex).getStringCellValue());
+                indexOfWorkName=workNames.getLongNames().indexOf(row.getCell(workNameColumnIndex).getStringCellValue());
             } catch (Exception e) {
                 System.out.println("Ошибка при определении вида работ в шаблонах");
             }
@@ -153,16 +153,20 @@ public abstract class RegistryBuilder {
                 }
             }
 
-            if (registry.getWorkNames().get(i-7).equals("ЛифтПД")) {
-                termShiftForLiftProject = registry.getTerms().get(i-7);
+            registry.setDesignTerm(0);
+            // Обновляем срок по проектированию на каждой итерации
+            if (registry.getWorkNames().get(i - startRowNum).contains("ПД") &
+                    registry.getTerms().get(i - startRowNum) > registry.getDesignTerm()) {
+                registry.setDesignTerm(registry.getTerms().get(i - startRowNum));
             }
 
         }
 
+        // Обновляем максимальный срок по всему графику на каждой итерации: макс.СМР + макс.ПД
         if (registry.getTerms().isEmpty()) {
             System.out.println("Нет данных для определения максимального срока");
         } else {
-            registry.setMaxTerm(Collections.max(registry.getTerms()) + termShiftForLiftProject);
+            registry.setMaxTerm(Collections.max(registry.getTerms()) + registry.getDesignTerm());
         }
 
         System.out.println("Данные из реестра получены");

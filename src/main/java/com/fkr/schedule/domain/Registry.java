@@ -5,6 +5,7 @@ import java.util.List;
 public class Registry {
 
     private int maxTerm;
+    private int designTerm;
     private String name;
     private List<String> addresses;
     private List<Boolean> status;
@@ -40,6 +41,14 @@ public class Registry {
 
     public void setMaxTerm(int maxTerm) {
         this.maxTerm = maxTerm;
+    }
+
+    public int getDesignTerm() {
+        return designTerm;
+    }
+
+    public void setDesignTerm(int designTerm) {
+        this.designTerm=designTerm;
     }
 
     public String getName() {
