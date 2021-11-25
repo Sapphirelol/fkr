@@ -71,6 +71,7 @@ public abstract class RegistryBuilder {
 
         }
 
+        registry.setDesignTerm(0);
         int startRowNum = 7;
 
         for (int i=startRowNum; i<sheet.getLastRowNum(); i++){
@@ -153,7 +154,6 @@ public abstract class RegistryBuilder {
                 }
             }
 
-            registry.setDesignTerm(0);
             // Обновляем срок по проектированию на каждой итерации
             if (registry.getWorkNames().get(i - startRowNum).contains("ПД") &
                     registry.getTerms().get(i - startRowNum) > registry.getDesignTerm()) {

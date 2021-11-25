@@ -215,7 +215,7 @@ public class Addresses {
                 cell.setCellStyle(tableStyle);
             }
 
-            int designTerm = registry.getWorkNames().get(workIndex).contains("ПД") ? registry.getDesignTerm() / 7 : 0;
+            int designTerm = !registry.getWorkNames().get(workIndex).contains("ПД") ? registry.getDesignTerm() / 7 : 0;
 
             if (isLift == 1 & !registry.getWorkNames().get(workIndex).contains("ЛО_")) {
 
